@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                   String   @id @default(auto()) @map("_id") @db.ObjectId
+  username             String
+  email                String   @unique
+  password             String
+  role                 Role     @default(USER)
+  isBlocked            Boolean  @default(false)
+  forcedPasswordReset  Boolean  @default(false)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Message {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  senderId  String   @db.ObjectId
+  receiverId String  @db.ObjectId
+  content   String
+  timestamp DateTime @default(now())
+
+  @@map("messages")
+}
+
+enum Role {
+  USER
+  MODERATOR
+  ADMIN
+}
